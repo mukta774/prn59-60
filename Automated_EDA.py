@@ -27,7 +27,6 @@ def load_file():
     
   print("Before processing the dataset contains :",df.shape)
   print("\nSummary statistics:\n", df.describe())
-
   
 def processing(df):
   features = df.columns.tolist()
