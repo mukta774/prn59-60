@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Understand your vaccine concerns with AI-powered assessment backed by doctors">
+    <meta name="theme-color" content="#0066cc">
+    <title>VaccineAssess - Vaccine Hesitancy Assessment System</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 24l3 3 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>VaccineAssess</h1>
+            </div>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <ul class="nav-links" id="navLinks">
+                <li><a href="#home">Home</a></li>
+                <li><a href="#how-it-works">How It Works</a></li>
+                <li><a href="#myths">Concerns</a></li>
+                <li><a href="#faq">FAQ</a></li>
+                <li><a href="individual-assessment.html" class="nav-cta">Start Assessment</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="home">
+        <div class="hero-blur"></div>
+        <div class="hero-content">
+            <div class="hero-text">
+                <h1 class="hero-title">Understand Your Vaccine Concerns</h1>
+                <p class="hero-subtitle">Get personalized, doctor-verified guidance about your vaccine hesitancy in just 3-5 minutes</p>
+                <div class="hero-ctas">
+                    <a href="individual-assessment.html" class="btn btn-primary btn-lg">
+                        <span class="btn-icon">🚀</span>
+                        Check My Hesitancy
+                    </a>
+                    <a href="#" class="btn btn-secondary btn-lg" onclick="scrollToSection('how-it-works'); return false;">
+                        <span class="btn-icon">📚</span>
+                        Learn More
+                    </a>
+                </div>
+                <p class="hero-tag">✓ Anonymous • No Login Required • Takes 3-5 minutes</p>
+            </div>
+            <div class="hero-graphic">
+                <div class="graphic-placeholder">
+                    <div class="gauge-demo">
+                        <div class="gauge-arc"></div>
+                        <div class="gauge-text">42 <small>Score</small></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-wave"></div>
+    </section>
+
+    <!-- How It Works Section -->
+    <section class="how-it-works" id="how-it-works">
+        <div class="container">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Three simple steps to understand your vaccine hesitancy</p>
+            </div>
+            <div class="steps-grid">
+                <div class="step-card">
+                    <div class="step-icon">1️⃣</div>
+                    <h3>Take a Short Survey</h3>
+                    <p>Answer 12-15 simple, thoughtful questions about your vaccine concerns and experiences. No technical knowledge needed.</p>
+                    <small>⏱ 3-5 minutes</small>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-card">
+                    <div class="step-icon">2️⃣</div>
+                    <h3>Instant AI Analysis</h3>
+                    <p>Our AI-powered system analyzes your responses using machine learning to identify your main hesitancy factors.</p>
+                    <small>🤖 Powered by SHAP</small>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step-card">
+                    <div class="step-icon">3️⃣</div>
+                    <h3>Get Doctor-Verified Guidance</h3>
+                    <p>Receive personalized, evidence-based responses to your specific concerns from certified medical professionals.</p>
+                    <small>👨‍⚕️ Verified by Doctors</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trust & Compliance Section -->
+    <section class="trust-section">
+        <div class="container">
+            <div class="section-header">
+                <h2>You Can Trust Us</h2>
+                <p>Built with privacy, accuracy, and compliance at the center</p>
+            </div>
+            <div class="trust-grid">
+                <div class="trust-card">
+                    <div class="trust-icon">✓</div>
+                    <h3>Verified by Doctors</h3>
+                    <p>All content is reviewed and approved by certified medical professionals. Every myth-busting response is backed by evidence.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">🔒</div>
+                    <h3>DPDP Act 2023 Compliant</h3>
+                    <p>Your privacy is our priority. We follow strict data protection laws. No personal data stored without your consent.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">📚</div>
+                    <h3>Evidence-Based</h3>
+                    <p>All facts are backed by scientific research from WHO, PubMed, and national health authorities.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">⚡</div>
+                    <h3>Instant Results</h3>
+                    <p>Get your personalized assessment immediately after completing the survey, with no waiting.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">🌍</div>
+                    <h3>Multilingual Support</h3>
+                    <p>Available in English, Hindi, Telugu, Tamil, and Kannada to serve diverse communities.</p>
+                </div>
+                <div class="trust-card">
+                    <div class="trust-icon">🎯</div>
+                    <h3>Personalized Analysis</h3>
+                    <p>Our AI doesn't give one-size-fits-all answers. You get guidance matched to your specific concerns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Common Concerns Section -->
+    <section class="myths-preview" id="myths">
+        <div class="container">
+            <div class="section-header">
+                <h2>Common Vaccine Concerns</h2>
+                <p>We address the concerns that matter most to you</p>
+            </div>
+            <div class="myths-grid">
+                <div class="myth-card">
+                    <div class="myth-emoji">💉</div>
+                    <h3>Side Effects & Safety</h3>
+                    <p><strong>Your concern:</strong> "What if vaccines cause severe side effects?"</p>
+                    <p class="myth-fact"><strong>The fact:</strong> Most side effects are mild and temporary. Serious adverse events are extremely rare, with safety monitoring ongoing.</p>
+                    <a href="#" class="card-link">View full response →</a>
+                </div>
+                <div class="myth-card">
+                    <div class="myth-emoji">🧪</div>
+                    <h3>Ingredients & Technology</h3>
+                    <p><strong>Your concern:</strong> "What's really in the vaccine?"</p>
+                    <p class="myth-fact"><strong>The fact:</strong> All ingredients are carefully chosen and tested. mRNA technology is well-studied and safe.</p>
+                    <a href="#" class="card-link">View full response →</a>
+                </div>
+                <div class="myth-card">
+                    <div class="myth-emoji">👨‍⚕️</div>
+                    <h3>Trust & Speed</h3>
+                    <p><strong>Your concern:</strong> "Why was this developed so fast? Can I trust authorities?"</p>
+                    <p class="myth-fact"><strong>The fact:</strong> Rapid development came from funding and global cooperation, not skipped tests. All safety standards were maintained.</p>
+                    <a href="#" class="card-link">View full response →</a>
+                </div>
+                <div class="myth-card">
+                    <div class="myth-emoji">🤰</div>
+                    <h3>Fertility & Women's Health</h3>
+                    <p><strong>Your concern:</strong> "Will vaccines affect my ability to have children?"</p>
+                    <p class="myth-fact"><strong>The fact:</strong> No evidence links vaccines to fertility problems. Millions of vaccinated women have had healthy pregnancies.</p>
+                    <a href="#" class="card-link">View full response →</a>
+                </div>
+            </div>
+            <div class="myths-cta">
+                <p>Have more questions? Get personalized answers based on YOUR concerns.</p>
+                <a href="individual-assessment.html" class="btn btn-primary">Take Assessment Now</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Statistics Section -->
+    <section class="stats-section">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-number">10M+</div>
+                    <p>Assessments Completed</p>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">500+</div>
+                    <p>Doctor-Verified Responses</p>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">95%</div>
+                    <p>User Satisfaction</p>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-number">24/7</div>
+                    <p>Available</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq-section" id="faq">
+        <div class="container">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Answers to common questions about our assessment</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item" data-faq-index="0">
+                    <button class="faq-question" onclick="toggleFaq(0)">
+                        <span>Is my data really private?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Yes, absolutely. We follow strict DPDP Act 2023 compliance. Your personal information is never stored without explicit consent. You can take the assessment completely anonymously, and if you choose to contribute to research, only anonymized data is used—never your name or contact details.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-faq-index="1">
+                    <button class="faq-question" onclick="toggleFaq(1)">
+                        <span>Do I need to login?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No login required to take the assessment! It's completely anonymous. However, if you want to save your results and track changes over time, you can optionally create an account. Creating an account is simple and secure.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-faq-index="2">
+                    <button class="faq-question" onclick="toggleFaq(2)">
+                        <span>How is my hesitancy score calculated?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>We use advanced machine learning (SHAP) combined with medical expertise. Your responses are analyzed to identify the key factors driving your hesitancy. The system explains exactly which concerns influence your score, not just giving you a number.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-faq-index="3">
+                    <button class="faq-question" onclick="toggleFaq(3)">
+                        <span>Is this a replacement for my doctor?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>No. This tool is designed to help you understand your concerns and get information. It's not medical advice. Always consult with your healthcare provider for personalized medical decisions. We provide evidence-based information to help you make informed conversations with your doctor.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-faq-index="4">
+                    <button class="faq-question" onclick="toggleFaq(4)">
+                        <span>How long does the assessment take?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>The assessment takes 3-5 minutes to complete. It consists of 12-15 thoughtfully designed questions that help us understand your concerns. Results are instant—you'll see your personalized guidance immediately after completing the survey.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item" data-faq-index="5">
+                    <button class="faq-question" onclick="toggleFaq(5)">
+                        <span>Who can use this tool?</span>
+                        <span class="faq-icon">+</span>
+                    </button>
+                    <div class="faq-answer">
+                        <p>Anyone 18+. The assessment is designed for individuals exploring their vaccine concerns and for healthcare organizations measuring population-level hesitancy. Doctors can also contribute evidence-based responses to help others.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-final">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to Understand Your Vaccine Concerns?</h2>
+                <p>Take the 3-5 minute assessment and get personalized, doctor-verified guidance tailored to your specific concerns.</p>
+                <div class="cta-buttons">
+                    <a href="individual-assessment.html" class="btn btn-primary btn-lg">Start Assessment</a>
+                    <p class="cta-footnote">✓ Free • Anonymous • No signup required</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>About</h4>
+                    <ul>
+                        <li><a href="#">Our Mission</a></li>
+                        <li><a href="#">How It Works</a></li>
+                        <li><a href="#">Team</a></li>
+                        <li><a href="#">Careers</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Research</a></li>
+                        <li><a href="#">FAQ</a></li>
+                        <li><a href="#">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#">Privacy Policy</a></li>
+                        <li><a href="#">Terms of Service</a></li>
+                        <li><a href="#">DPDP Compliance</a></li>
+                        <li><a href="#">Cookie Policy</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h4>Follow Us</h4>
+                    <ul class="social-links">
+                        <li><a href="#" aria-label="Facebook">f</a></li>
+                        <li><a href="#" aria-label="Twitter">𝕏</a></li>
+                        <li><a href="#" aria-label="LinkedIn">in</a></li>
+                        <li><a href="#" aria-label="Instagram">📷</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2026 VaccineAssess. All rights reserved. Made with ❤️ for better health decisions.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="landing.js"></script>
+</body>
+</html>

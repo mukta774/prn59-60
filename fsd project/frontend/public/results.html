@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Your personalized vaccine hesitancy assessment results with AI-powered insights">
+    <title>Your Vaccine Hesitancy Assessment - Results</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="results.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 24l3 3 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>VaccineAssess</h1>
+            </div>
+            <a href="index.html" class="btn btn-secondary btn-sm">← Back Home</a>
+        </div>
+    </nav>
+
+    <!-- Results Wrapper -->
+    <div class="results-wrapper">
+        <div class="results-container">
+            <!-- Header -->
+            <div class="results-header">
+                <h1>Your Assessment Results</h1>
+                <p class="results-subtitle">Personalized insights based on your responses</p>
+            </div>
+
+            <!-- Hesitancy Score Section -->
+            <section class="score-section">
+                <div class="score-card">
+                    <div class="gauge-container">
+                        <svg id="gauge-svg" class="gauge" viewBox="0 0 300 170" preserveAspectRatio="xMidYMid meet">
+                            <!-- Background arcs -->
+                            <defs>
+                                <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                                    <stop offset="0%" style="stop-color:#10b981;stop-opacity:1" />
+                                    <stop offset="25%" style="stop-color:#f59e0b;stop-opacity:1" />
+                                    <stop offset="50%" style="stop-color:#ef5350;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#c62828;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+
+                            <!-- Gauge background track -->
+                            <path d="M 50 150 A 100 100 0 0 1 250 150" stroke="#e5e7eb" stroke-width="20" fill="none" stroke-linecap="round"/>
+
+                            <!-- Gauge gradient track -->
+                            <path id="gauge-progress" d="M 50 150 A 100 100 0 0 1 250 150" stroke="url(#gaugeGradient)" stroke-width="20" fill="none" stroke-linecap="round" stroke-dasharray="0, 314"/>
+
+                            <!-- Center circle -->
+                            <circle cx="150" cy="150" r="40" fill="white" stroke="#0066cc" stroke-width="2"/>
+
+                            <!-- Needle -->
+                            <g id="gauge-needle">
+                                <line x1="150" y1="150" x2="150" y2="70" stroke="#0066cc" stroke-width="3" stroke-linecap="round"/>
+                                <circle cx="150" cy="150" r="6" fill="#0066cc"/>
+                            </g>
+                        </svg>
+
+                        <!-- Score Display -->
+                        <div class="score-display">
+                            <div class="score-number" id="hesitancy-score">--</div>
+                            <div class="score-label">Hesitancy Score</div>
+                        </div>
+                    </div>
+
+                    <!-- Tier Display -->
+                    <div class="score-info">
+                        <h2 id="hesitancy-tier" class="tier-name">Calculating...</h2>
+                        <p id="tier-description" class="tier-description">Your assessment is being analyzed...</p>
+
+                        <!-- Tier Legend -->
+                        <div class="tier-legend">
+                            <div class="tier-item tier-confident">
+                                <div class="tier-box"></div>
+                                <span><strong>0-25:</strong> Confident</span>
+                            </div>
+                            <div class="tier-item tier-mild">
+                                <div class="tier-box"></div>
+                                <span><strong>26-50:</strong> Mildly Hesitant</span>
+                            </div>
+                            <div class="tier-item tier-moderate">
+                                <div class="tier-box"></div>
+                                <span><strong>51-75:</strong> Moderately Hesitant</span>
+                            </div>
+                            <div class="tier-item tier-strong">
+                                <div class="tier-box"></div>
+                                <span><strong>76-100:</strong> Strongly Hesitant</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SHAP Factors Section -->
+            <section class="factors-section">
+                <div class="section-header">
+                    <h2>🔍 What's Behind Your Hesitancy?</h2>
+                    <p>These key factors are influencing your assessment. Each is explained in plain language.</p>
+                </div>
+
+                <div id="factors-container" class="factors-container">
+                    <!-- Factors will be populated here by JavaScript -->
+                    <div class="loading-placeholder">
+                        <p>Analyzing your responses...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Doctor-Curated Myths Section -->
+            <section class="myths-section">
+                <div class="section-header">
+                    <h2>👨‍⚕️ Doctor-Verified Answers</h2>
+                    <p>Responses to your specific concerns from certified medical professionals</p>
+                </div>
+
+                <div id="myths-container" class="myths-container">
+                    <!-- Myths will be populated here by JavaScript -->
+                    <div class="loading-placeholder">
+                        <p>Matching myths to your concerns...</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Action Recommendations Section -->
+            <section class="action-section">
+                <div class="section-header">
+                    <h2>⚡ Recommended Next Steps</h2>
+                    <p>Resources and support tailored to your situation</p>
+                </div>
+
+                <div class="actions-grid">
+                    <div class="action-card">
+                        <div class="action-icon">📍</div>
+                        <h3>Find Vaccination Centre</h3>
+                        <p>Locate the nearest vaccination facility in your area with address and contact info</p>
+                        <button class="btn btn-primary" onclick="showAction('vaccination-centre')">
+                            Find Centre
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon">📞</div>
+                        <h3>Speak to an Expert</h3>
+                        <p>Call toll-free helplines with trained health counselors who can answer your questions</p>
+                        <button class="btn btn-primary" onclick="showAction('helpline')">
+                            Get Helpline Numbers
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon">📚</div>
+                        <h3>Learn From Trusted Sources</h3>
+                        <p>Access resources from WHO, CDC, and national health ministry websites</p>
+                        <button class="btn btn-primary" onclick="showAction('resources')">
+                            View Resources
+                        </button>
+                    </div>
+
+                    <div class="action-card">
+                        <div class="action-icon">👨‍⚕️</div>
+                        <h3>Talk to Your Doctor</h3>
+                        <p>Schedule a consultation with your healthcare provider to discuss your specific concerns</p>
+                        <button class="btn btn-primary" onclick="showAction('doctor-talk')">
+                            Prepare for Talk
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Action Modal -->
+                <div id="action-modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeAction()">&times;</button>
+                        <div id="modal-body" class="modal-body">
+                            <!-- Content populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Data Contribution Section -->
+            <section class="contribution-section">
+                <div class="contribution-card">
+                    <h3>🤝 Help Improve Vaccine Communication</h3>
+                    <p>Your anonymous responses can help researchers understand and address hesitancy better.</p>
+
+                    <div class="consent-group">
+                        <input type="checkbox" id="contribute-data" class="consent-checkbox">
+                        <label for="contribute-data" class="consent-label">
+                            <strong>Yes, I want to contribute my anonymous data to research</strong>
+                            <small>Your name and contact details will NEVER be stored. Only your responses are used.</small>
+                        </label>
+                    </div>
+
+                    <p class="privacy-note">
+                        ✓ <strong>DPDP Act 2023 Compliant</strong> •
+                        ✓ <strong>100% Anonymous</strong> •
+                        ✓ <strong>No PII Stored</strong>
+                    </p>
+                </div>
+            </section>
+
+            <!-- Export & Share Section -->
+            <section class="export-section">
+                <div class="section-header">
+                    <h2>💾 Export Your Results</h2>
+                    <p>Save or share your assessment report</p>
+                </div>
+
+                <div class="export-buttons">
+                    <button id="export-pdf" class="btn btn-secondary btn-lg" onclick="exportPDF()">
+                        <span class="btn-icon">📥</span>
+                        Download as PDF
+                    </button>
+                    <button id="print-results" class="btn btn-secondary btn-lg" onclick="printResults()">
+                        <span class="btn-icon">🖨️</span>
+                        Print Results
+                    </button>
+                    <button id="retake-survey" class="btn btn-secondary btn-lg" onclick="retakeSurvey()">
+                        <span class="btn-icon">🔄</span>
+                        Retake Survey
+                    </button>
+                </div>
+            </section>
+
+            <!-- Disclaimer -->
+            <div class="disclaimer">
+                <h4>⚠️ Important Disclaimer</h4>
+                <p>
+                    This assessment tool is designed for educational purposes and to help you understand your concerns about vaccines.
+                    It is <strong>not a substitute for professional medical advice</strong>. Always consult with your doctor or healthcare
+                    provider for medical decisions. The results are based on your self-reported responses and may not account for all
+                    medical factors.
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="results.js"></script>
+</body>
+</html>

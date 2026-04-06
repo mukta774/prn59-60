@@ -1,0 +1,582 @@
+/* ============================================================================
+   Survey Form Styles - survey.css
+   ============================================================================ */
+
+/* Survey Wrapper */
+.survey-wrapper {
+    min-height: 100vh;
+    background: linear-gradient(135deg, var(--primary-light), rgba(0, 102, 204, 0.05));
+    padding: var(--spacing-lg);
+    padding-top: 100px;
+}
+
+.survey-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background: var(--bg-primary);
+    border-radius: var(--radius-2xl);
+    box-shadow: var(--shadow-xl);
+    padding: var(--spacing-3xl);
+    animation: slideInUp 0.5s ease-out;
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ============================================================================
+   Navigation Bar Modifications for Survey
+   ============================================================================ */
+
+.nav-right {
+    display: flex;
+    gap: var(--spacing-lg);
+    align-items: center;
+}
+
+.btn-sm {
+    padding: var(--spacing-sm) var(--spacing-md) !important;
+    font-size: var(--font-size-sm) !important;
+}
+
+/* ============================================================================
+   Progress Section
+   ============================================================================ */
+
+.progress-section {
+    margin-bottom: var(--spacing-3xl);
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: var(--spacing-lg);
+}
+
+.progress-header h2 {
+    color: var(--primary);
+    font-size: var(--font-size-2xl);
+    margin: 0 0 var(--spacing-xs) 0;
+}
+
+.progress-header p {
+    color: var(--text-secondary);
+    font-size: var(--font-size-sm);
+    margin: 0;
+}
+
+.progress-text {
+    text-align: right;
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.progress-divider {
+    color: var(--gray-300);
+    margin: 0 var(--spacing-xs);
+}
+
+.progress-bar {
+    width: 100%;
+    height: 8px;
+    background-color: var(--gray-200);
+    border-radius: var(--radius-full);
+    overflow: hidden;
+    margin-bottom: var(--spacing-md);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--primary), var(--secondary));
+    border-radius: var(--radius-full);
+    transition: width var(--transition-base);
+}
+
+.progress-percentage {
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+    font-weight: 500;
+}
+
+/* ============================================================================
+   Survey Sections
+   ============================================================================ */
+
+.survey-section {
+    margin-bottom: var(--spacing-3xl);
+}
+
+.section-header {
+    margin-bottom: var(--spacing-2xl);
+    padding-bottom: var(--spacing-lg);
+    border-bottom: 2px solid var(--gray-200);
+}
+
+.section-header h3 {
+    color: var(--text-primary);
+    font-size: var(--font-size-2xl);
+    margin-bottom: var(--spacing-sm);
+}
+
+.section-header p {
+    color: var(--text-secondary);
+    margin: 0;
+}
+
+/* ============================================================================
+   Survey Questions
+   ============================================================================ */
+
+.survey-question {
+    margin-bottom: var(--spacing-2xl);
+    padding: var(--spacing-lg);
+    background-color: var(--bg-secondary);
+    border-radius: var(--radius-lg);
+    border-left: 4px solid var(--primary);
+    transition: all var(--transition-base);
+}
+
+.survey-question:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateX(4px);
+}
+
+.question-label {
+    display: flex;
+    gap: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    cursor: pointer;
+}
+
+.question-number {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
+    background-color: var(--primary);
+    color: white;
+    border-radius: var(--radius-full);
+    font-weight: 700;
+    font-size: var(--font-size-base);
+    flex-shrink: 0;
+}
+
+.question-text {
+    display: block;
+    font-size: var(--font-size-lg);
+    font-weight: 600;
+    color: var(--text-primary);
+    line-height: 1.4;
+}
+
+/* ============================================================================
+   Response Options
+   ============================================================================ */
+
+.response-options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--spacing-md);
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    gap: var(--spacing-md);
+    cursor: pointer;
+    padding: var(--spacing-md);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+}
+
+.option:hover {
+    background-color: rgba(0, 102, 204, 0.05);
+}
+
+.option input[type="radio"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    margin: 0;
+}
+
+.option label {
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    margin: 0;
+    flex: 1;
+}
+
+.option input[type="radio"]:checked + label {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+.option input[type="radio"]:focus {
+    outline: 2px solid var(--primary);
+    outline-offset: 2px;
+}
+
+/* Likert Scale Styling */
+.response-options.likert-scale {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: var(--spacing-sm);
+}
+
+.response-options.likert-scale .option {
+    flex: 1;
+    min-width: 100px;
+    justify-content: center;
+    flex-direction: column;
+    padding: var(--spacing-md);
+    border: 2px solid var(--gray-200);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: all var(--transition-fast);
+}
+
+.response-options.likert-scale .option:hover {
+    border-color: var(--primary);
+    background-color: var(--primary-light);
+}
+
+.response-options.likert-scale .option input {
+    width: 18px;
+    height: 18px;
+    margin-bottom: var(--spacing-xs);
+}
+
+.likert-label {
+    display: block;
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.response-options.likert-scale .option input[type="radio"]:checked + .likert-label {
+    color: var(--primary);
+    font-weight: 700;
+}
+
+/* ============================================================================
+   Survey Navigation
+   ============================================================================ */
+
+.survey-navigation {
+    display: flex;
+    gap: var(--spacing-lg);
+    margin-top: var(--spacing-3xl);
+    padding-top: var(--spacing-2xl);
+    border-top: 2px solid var(--gray-200);
+}
+
+.nav-spacer {
+    flex: 1;
+}
+
+#prev-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#next-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================================================
+   Submit Section
+   ============================================================================ */
+
+.submit-section {
+    margin-top: var(--spacing-3xl);
+    padding: var(--spacing-2xl);
+    background: linear-gradient(135deg, var(--primary-light), rgba(0, 102, 204, 0.08));
+    border: 2px solid var(--primary);
+    border-radius: var(--radius-2xl);
+    text-align: center;
+}
+
+.submit-section h3 {
+    color: var(--primary);
+    margin-bottom: var(--spacing-md);
+}
+
+.submit-section p {
+    color: var(--text-secondary);
+    margin-bottom: var(--spacing-lg);
+}
+
+.consent-checkbox {
+    display: flex;
+    gap: var(--spacing-md);
+    margin: var(--spacing-lg) 0;
+    padding: var(--spacing-lg);
+    background-color: var(--bg-primary);
+    border-radius: var(--radius-lg);
+}
+
+.consent-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary);
+    margin-top: 2px;
+    flex-shrink: 0;
+}
+
+.consent-checkbox label {
+    cursor: pointer;
+    color: var(--text-primary);
+    font-size: var(--font-size-sm);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* ============================================================================
+   Survey Meta
+   ============================================================================ */
+
+.survey-meta {
+    text-align: center;
+    margin-top: var(--spacing-2xl);
+    padding-top: var(--spacing-lg);
+    border-top: 1px solid var(--gray-200);
+    font-size: var(--font-size-sm);
+    color: var(--text-secondary);
+}
+
+.survey-meta p {
+    margin: var(--spacing-sm) 0;
+}
+
+/* ============================================================================
+   Language Selector
+   ============================================================================ */
+
+#language {
+    padding: var(--spacing-sm) var(--spacing-md);
+    border: 2px solid var(--gray-300);
+    border-radius: var(--radius-md);
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
+    font-size: var(--font-size-base);
+    cursor: pointer;
+    transition: border-color var(--transition-fast);
+}
+
+#language:hover,
+#language:focus {
+    border-color: var(--primary);
+    outline: none;
+}
+
+/* ============================================================================
+   Form Validation
+   ============================================================================ */
+
+.survey-question.has-error {
+    border-left-color: var(--danger);
+    background-color: rgba(239, 68, 68, 0.05);
+}
+
+.error-message {
+    display: flex;
+    gap: var(--spacing-sm);
+    align-items: center;
+    color: var(--danger);
+    font-size: var(--font-size-sm);
+    margin-top: var(--spacing-sm);
+}
+
+/* ============================================================================
+   Loading States
+   ============================================================================ */
+
+.btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.loading-spinner {
+    display: inline-block;
+    width: 16px;
+    height: 16px;
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ============================================================================
+   Responsive Design
+   ============================================================================ */
+
+@media (max-width: 768px) {
+    .survey-wrapper {
+        padding: var(--spacing-md);
+        padding-top: 80px;
+    }
+
+    .survey-container {
+        padding: var(--spacing-xl);
+        border-radius: var(--radius-xl);
+    }
+
+    .progress-header {
+        flex-direction: column;
+        gap: var(--spacing-md);
+    }
+
+    .progress-text {
+        text-align: left;
+    }
+
+    .section-header h3 {
+        font-size: var(--font-size-xl);
+    }
+
+    .question-label {
+        flex-direction: column;
+        gap: var(--spacing-sm);
+    }
+
+    .question-number {
+        width: 28px;
+        height: 28px;
+        font-size: var(--font-size-sm);
+    }
+
+    .response-options.likert-scale {
+        flex-direction: column;
+    }
+
+    .response-options.likert-scale .option {
+        flex: 1;
+        min-width: 100%;
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+
+    .survey-navigation {
+        flex-direction: column;
+    }
+
+    .nav-spacer {
+        height: 0;
+    }
+
+    #prev-btn,
+    #next-btn {
+        width: 100%;
+    }
+
+    .nav-right {
+        gap: var(--spacing-md);
+    }
+
+    #language {
+        font-size: var(--font-size-sm);
+        padding: var(--spacing-sm) var(--spacing-md);
+    }
+}
+
+@media (max-width: 480px) {
+    .survey-wrapper {
+        padding: var(--spacing-md);
+        padding-top: 70px;
+    }
+
+    .survey-container {
+        padding: var(--spacing-lg);
+    }
+
+    .survey-question {
+        padding: var(--spacing-md);
+    }
+
+    .question-number {
+        width: 24px;
+        height: 24px;
+        font-size: var(--font-size-xs);
+    }
+
+    .question-text {
+        font-size: var(--font-size-base);
+    }
+
+    .option {
+        padding: var(--spacing-sm);
+        gap: var(--spacing-sm);
+    }
+
+    .option label {
+        font-size: var(--font-size-sm);
+    }
+
+    .response-options.likert-scale .option {
+        padding: var(--spacing-sm);
+        min-width: 60px;
+        font-size: var(--font-size-xs);
+    }
+
+    .likert-label {
+        font-size: var(--font-size-xs);
+    }
+
+    .submit-section {
+        padding: var(--spacing-lg);
+    }
+}
+
+/* ============================================================================
+   Accessibility
+   ============================================================================ */
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+@media (prefers-color-scheme: dark) {
+    .survey-container {
+        background-color: var(--dark-lighter);
+    }
+
+    .survey-question {
+        background-color: var(--gray-800);
+    }
+
+    .response-options.likert-scale .option:hover {
+        background-color: var(--gray-800);
+    }
+
+    .section-header {
+        border-bottom-color: var(--gray-700);
+    }
+
+    #language {
+        background-color: var(--gray-800);
+        color: var(--gray-100);
+    }
+}
