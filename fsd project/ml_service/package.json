@@ -1,0 +1,13 @@
+{
+  "name": "vaccine-hesitancy-ml",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "ML Service for Vaccine Hesitancy Prediction using SHAP",
+  "main": "src/app.py",
+  "scripts": {
+    "start": "python src/app.py",
+    "train": "python src/train_model.py",
+    "test": "pytest tests/",
+    "evaluate": "python src/evaluate.py"
+  }
+}
