@@ -1,6 +1,6 @@
 """
 ML Service Flask API
-Handles SHAP-based hesitancy predictions
+Handles SHAP-based hesitancy predictions from 15-question survey
 """
 
 from flask import Flask, request, jsonify
@@ -13,6 +13,7 @@ import joblib
 import shap
 import numpy as np
 import pandas as pd
+from sklearn.preprocessing import StandardScaler
 
 load_dotenv()
 
@@ -27,33 +28,41 @@ logger = logging.getLogger(__name__)
 try:
     MODEL_PATH = os.getenv('MODEL_PATH', './models/hesitancy_model.pkl')
     EXPLAINER_PATH = os.getenv('EXPLAINER_PATH', './models/hesitancy_explainer.pkl')
+    SCALER_PATH = os.getenv('SCALER_PATH', './models/hesitancy_scaler.pkl')
 
     model = joblib.load(MODEL_PATH)
     explainer = joblib.load(EXPLAINER_PATH)
-    logger.info("Model and explainer loaded successfully")
+    scaler = joblib.load(SCALER_PATH)
+    logger.info("Model, explainer, and scaler loaded successfully")
 except Exception as e:
     logger.error(f"Failed to load model: {e}")
     model = None
     explainer = None
+    scaler = None
 
 
-# Survey question to feature mapping
-FEATURE_MAP = {
-    'age': 'demographics_age',
-    'gender': 'demographics_gender',
-    'education': 'demographics_education',
-    'employment': 'demographics_employment',
-    'vax_history': 'prior_exp_vaccination_history',
-    'side_effects': 'prior_exp_side_effects',
-    'trust_doctors': 'attitude_trust_doctors',
-    'confidence_approval': 'attitude_confidence_approval',
-    'worry_ingredients': 'attitude_worry_ingredients',
-    'peer_influence': 'attitude_peer_influence',
-    'media_influence': 'attitude_media_influence'
+# === FEATURE MAPPING FROM 15-QUESTION SURVEY ===
+# Maps survey question responses to model features
+SURVEY_TO_FEATURES = {
+    'Q1_age_group': 'age_group',
+    'Q2_gender': 'gender',
+    'Q3_education_level': 'education_level',
+    'Q4_health_conditions': 'health_conditions',
+    'Q5_vaccination_status': 'vaccination_status',
+    'Q6_side_effects_experienced': 'side_effects_experienced',
+    'Q7_covid_experience': 'covid_experience',
+    'Q8_allergies': 'allergies',
+    'Q9_doctor_discussions': 'doctor_discussions',
+    'Q10_info_sources': 'info_sources',
+    'Q11_recent_research': 'recent_research',
+    'Q12_trust_authorities': 'trust_authorities',
+    'Q13_vaccine_concerns': 'vaccine_concerns',
+    'Q14_vaccine_effectiveness': 'vaccine_effectiveness',
+    'Q15_vaccination_intent': 'vaccination_intent'
 }
 
 
-@app.route('/api/health', methods=['GET'])
+@app.route('/api/v1/health', methods=['GET'])
 def health_check():
     """Health check endpoint"""
     return jsonify({
@@ -63,18 +72,19 @@ def health_check():
     }), 200
 
 
-@app.route('/api/predict', methods=['POST'])
-def predict():
+@app.route('/api/v1/predict', methods=['POST'])
+def predict_hesitancy():
     """
-    Predict hesitancy score and generate SHAP explanations
+    Predict hesitancy score from survey responses
 
     Expected JSON:
     {
-        "responses": {
-            "demographics": {...},
-            "prior_experience": {...},
-            "attitudes": {...}
-        }
+        "responses": [
+            {"q": 1, "answer": "26-35"},
+            {"q": 2, "answer": "male"},
+            ...
+            {"q": 15, "answer": "probably_yes"}
+        ]
     }
     """
     try:
@@ -82,185 +92,211 @@ def predict():
             return jsonify({'error': 'Model not loaded'}), 503
 
         data = request.get_json()
-        responses = data.get('responses', {})
+        survey_responses = data.get('responses', [])
 
-        # Convert responses to feature vector
-        features = preprocess_responses(responses)
-        features_df = pd.DataFrame([features])
+        # Convert survey responses to feature vector
+        feature_dict = preprocess_survey_responses(survey_responses)
+        features_df = pd.DataFrame([feature_dict])
+
+        # Scale features
+        features_scaled = scaler.transform(features_df)
 
         # Make prediction
-        prediction = model.predict(features_df)[0]
-        probability = model.predict_proba(features_df)[0]
+        prediction_proba = model.predict_proba(features_scaled)[0]
+        hesitancy_prob = float(prediction_proba[1])  # Probability of high hesitancy
+        hesitancy_score = int(hesitancy_prob * 100)  # Convert to 0-100 scale
 
         # Generate SHAP explanation
-        shap_values = explainer.shap_values(features_df)
-        explanation = generate_shap_explanation(shap_values, features, model.feature_names_in_)
+        shap_values = explainer.shap_values(features_scaled)
+        factors = generate_shap_factors(shap_values[1], feature_dict, hesitancy_score)
 
         # Determine tier
-        tier = get_hesitancy_tier(prediction)
-
-        # Validate response patterns (background integrity check)
-        validation = validate_response_patterns(responses)
+        tier = get_hesitancy_tier(hesitancy_score)
 
         response = {
-            'hesitancy_score': float(prediction),
-            'hesitancy_tier': tier,
-            'probability': {
-                'class_0': float(probability[0]),
-                'class_1': float(probability[1])
-            },
-            'shap_factors': explanation,
-            'validation': validation
+            'score': hesitancy_score,
+            'tier': tier,
+            'probability': hesitancy_prob,
+            'factors': factors,
+            'validation': validate_survey_responses(survey_responses)
         }
 
-        logger.info(f"Prediction successful. Score: {prediction:.2f}")
+        logger.info(f"Prediction successful. Score: {hesitancy_score}, Tier: {tier}")
         return jsonify(response), 200
 
     except Exception as e:
-        logger.error(f"Prediction error: {e}")
+        logger.error(f"Prediction error: {e}", exc_info=True)
         return jsonify({'error': str(e)}), 400
 
 
-def preprocess_responses(responses):
-    """Convert survey responses to feature vector"""
-    features = {}
+def preprocess_survey_responses(survey_responses):
+    """Convert 15 survey responses to feature dict"""
+    feature_dict = {}
 
-    # Demographics
-    features['age'] = encode_age(responses.get('demographics', {}).get('age'))
-    features['gender'] = encode_categorical(responses.get('demographics', {}).get('gender'))
-    features['education'] = encode_categorical(responses.get('demographics', {}).get('education'))
-    features['employment'] = encode_categorical(responses.get('demographics', {}).get('employment'))
+    # Build response dict with Q1-Q15 keys
+    responses_by_q = {r['q']: r['answer'] for r in survey_responses}
 
-    # Prior Experience
-    features['vax_history'] = 1 if responses.get('prior_experience', {}).get('vaccination_history') == 'yes' else 0
-    features['side_effects'] = 1 if responses.get('prior_experience', {}).get('side_effects_experienced') == 'yes' else 0
+    # Q1: Age group (encode to numeric)
+    q1_age = responses_by_q.get(1, '26-35')
+    age_mapping = {'18-25': 1, '26-35': 2, '36-50': 3, '51-65': 4, '65+': 5}
+    feature_dict['age_group'] = age_mapping.get(q1_age, 2)
 
-    # Attitudes (Likert scale 1-5)
-    feelings = responses.get('attitudes', {})
-    features['trust_doctors'] = feelings.get('trust_doctors', 3)
-    features['confidence_approval'] = feelings.get('confidence_approval', 3)
-    features['worry_ingredients'] = feelings.get('worry_ingredients', 3)
-    features['peer_influence'] = feelings.get('peer_influence', 3)
-    features['media_influence'] = feelings.get('media_influence', 3)
+    # Q2: Gender (encode to numeric)
+    q2_gender = responses_by_q.get(2, 'other')
+    gender_mapping = {'male': 1, 'female': 2, 'other': 3}
+    feature_dict['gender'] = gender_mapping.get(q2_gender, 2)
 
-    return features
+    # Q3: Education (encode to numeric)
+    q3_education = responses_by_q.get(3, 'bachelor')
+    education_mapping = {'high_school': 1, 'bachelor': 2, 'master': 3, 'phd': 4}
+    feature_dict['education_level'] = education_mapping.get(q3_education, 2)
 
+    # Q4: Health conditions (binary)
+    feature_dict['health_conditions'] = 1 if responses_by_q.get(4) == 'yes' else 0
 
-def encode_age(age_str):
-    """Encode age group to numeric"""
-    age_mapping = {
-        '18-25': 1,
-        '26-35': 2,
-        '36-50': 3,
-        '51-65': 4,
-        '65+': 5
-    }
-    return age_mapping.get(age_str, 3)
+    # Q5: Vaccination status (encode to numeric)
+    q5_vax = responses_by_q.get(5, 'partially')
+    vax_mapping = {'not_vaccinated': 0, 'partially': 1, 'fully': 2}
+    feature_dict['vaccination_status'] = vax_mapping.get(q5_vax, 1)
 
+    # Q6-Q11: Binary yes/no questions
+    for q_num, feature_name in [
+        (6, 'side_effects_experienced'),
+        (7, 'covid_experience'),
+        (8, 'allergies'),
+        (9, 'doctor_discussions'),
+        (10, 'info_sources'),
+        (11, 'recent_research')
+    ]:
+        feature_dict[feature_name] = 1 if responses_by_q.get(q_num) == 'yes' else 0
 
-def encode_categorical(value):
-    """Generic categorical encoding"""
-    if value is None:
-        return 0
-    return hash(value) % 256 / 256  # Simple encoding
+    # Q12: Trust in authorities (Likert 1-5) -> invert for hesitancy
+    q12_trust = int(responses_by_q.get(12, 3))
+    feature_dict['trust_authorities'] = 6 - q12_trust  # Invert: low trust = high hesitancy signal
+
+    # Q13: Vaccine concerns (Likert 1-5) -> direct mapping
+    q13_concerns = int(responses_by_q.get(13, 3))
+    feature_dict['vaccine_concerns'] = q13_concerns
+
+    # Q14: Vaccine effectiveness (Likert 1-5) -> invert for hesitancy
+    q14_effectiveness = int(responses_by_q.get(14, 3))
+    feature_dict['vaccine_effectiveness'] = 6 - q14_effectiveness  # Invert: low belief = high hesitancy signal
+
+    # Q15: Vaccination intent (encode to numeric)
+    q15_intent = responses_by_q.get(15, 'unsure')
+    intent_mapping = {'definitely_no': 0, 'probably_no': 1, 'unsure': 2, 'probably_yes': 3, 'definitely_yes': 4}
+    feature_dict['vaccination_intent'] = intent_mapping.get(q15_intent, 2)
+
+    return feature_dict
 
 
 def get_hesitancy_tier(score):
-    """Determine hesitancy tier from score"""
-    if score < 25:
-        return 'Confident'
-    elif score < 50:
-        return 'Mildly Hesitant'
-    elif score < 75:
-        return 'Moderately Hesitant'
+    """Determine hesitancy tier from 0-100 score"""
+    if score <= 25:
+        return 'confident'
+    elif score <= 50:
+        return 'mildly_hesitant'
+    elif score <= 75:
+        return 'moderately_hesitant'
     else:
-        return 'Strongly Hesitant'
+        return 'strongly_hesitant'
 
 
-def generate_shap_explanation(shap_values, features, feature_names):
-    """Generate top SHAP factors explanation"""
-    # Get absolute SHAP values
-    abs_shap = np.abs(shap_values[0])
-
-    # Get top 3 features
+def generate_shap_factors(shap_values, feature_dict, hesitancy_score):
+    """Generate top 3 SHAP factors with explanations"""
+    # Get absolute SHAP values and sort
+    abs_shap = np.abs(shap_values)
     top_indices = np.argsort(abs_shap)[-3:][::-1]
+
+    feature_names = list(feature_dict.keys())
 
     factors = []
     for idx in top_indices:
-        factor_name = feature_names[idx]
-        influence = abs_shap[idx] / np.sum(abs_shap) * 100
+        if idx < len(feature_names):
+            feature_name = feature_names[idx]
+            importance_pct = (abs_shap[idx] / np.sum(abs_shap) * 100) if np.sum(abs_shap) > 0 else 0
 
-        factors.append({
-            'factor': factor_name,
-            'influence_percentage': float(influence),
-            'explanation': get_factor_explanation(factor_name, influence)
-        })
+            factor_info = {
+                'name': format_feature_name(feature_name),
+                'importance': round(float(importance_pct), 1),
+                'explanation': get_factor_explanation(feature_name, hesitancy_score)
+            }
+            factors.append(factor_info)
 
-    return factors
+    return factors[:3]  # Top 3 factors
 
 
-def get_factor_explanation(factor_name, influence):
-    """Get plain language explanation for factors"""
+def format_feature_name(feature_name):
+    """Convert feature name to readable format"""
+    return ' '.join(w.title() for w in feature_name.split('_'))
+
+
+def get_factor_explanation(feature_name, score):
+    """Get plain language explanation for each factor"""
     explanations = {
-        'worry_ingredients': f"Your concerns about vaccine ingredients are a major factor ({influence:.0f}%) in your hesitancy.",
-        'trust_doctors': f"Your trust level in doctors influences your hesitancy score ({influence:.0f}%).",
-        'side_effects': f"Side effect concerns play a significant role ({influence:.0f}%) in your assessment.",
-        'confidence_approval': f"Confidence in approval processes affects your score ({influence:.0f}%).",
-        'peer_influence': f"Social and peer influences impact your hesitancy ({influence:.0f}%).",
-        'media_influence': f"Media coverage and information sources are a factor ({influence:.0f}%) in your assessment.",
+        'trust_authorities': "Your trust level in health authorities significantly influences your hesitancy score.",
+        'vaccine_concerns': "Concerns about vaccine safety are a major factor in your assessment.",
+        'vaccine_effectiveness': "Your belief in vaccine effectiveness is a key driver of your score.",
+        'vaccination_intent': "Your overall vaccination intent strongly impacts your hesitancy level.",
+        'age_group': "Age-related factors play a role in your vaccine hesitancy assessment.",
+        'vaccination_status': "Your current vaccination status influences your hesitancy score.",
+        'side_effects_experienced': "Your past experience with vaccine side effects affects your assessment.",
+        'covid_experience': "Your COVID-19 experience impacts your vaccine hesitancy level.",
+        'education_level': "Your education level is a contributing factor to your assessment.",
+        'gender': "Gender-related factors influence your hesitancy score.",
+        'health_conditions': "Your health conditions are a relevant factor in your assessment.",
+        'allergies': "Any allergies you reported are considered in your score.",
+        'doctor_discussions': "Your discussions with healthcare providers influence your assessment.",
+        'info_sources': "The sources of your vaccine information play a role in your hesitancy.",
+        'recent_research': "Your recent research into vaccine topics affects your score.",
     }
-    return explanations.get(factor_name, f"This factor contributes {influence:.0f}% to your score.")
+    return explanations.get(feature_name, "This factor contributes to your hesitancy score.")
 
 
-def validate_response_patterns(responses):
-    """Background integrity validation"""
+def validate_survey_responses(survey_responses):
+    """Background integrity validation of survey responses"""
     flags = []
 
-    attitudes = responses.get('attitudes', {})
+    responses_by_q = {r['q']: r['answer'] for r in survey_responses}
 
-    # Check for straight-line patterns (all same response)
-    values = [attitudes.get(k) for k in attitudes if isinstance(attitudes.get(k), (int, float))]
-    if values and len(set(values)) == 1:
+    # Check if all questions answered
+    if len(survey_responses) < 15:
+        flags.append('incomplete_survey')
+
+    # Check for straight-line pattern in Likert scale questions (Q12-Q14)
+    likert_answers = []
+    for q in [12, 13, 14]:
+        ans = responses_by_q.get(q)
+        if ans and ans.isdigit():
+            likert_answers.append(int(ans))
+
+    if likert_answers and len(set(likert_answers)) == 1:
         flags.append('straight_line_response_pattern')
 
-    # Check for contradictions
-    if attitudes.get('trust_doctors', 0) > 3 and attitudes.get('worry_ingredients', 0) > 4:
-        flags.append('potential_contradiction_detected')
+    # Check response time would be done on frontend
 
     return {
         'passed': len(flags) == 0,
         'flags': flags,
-        'risk_score': len(flags) * 0.2
+        'risk_level': 'low' if len(flags) == 0 else 'medium' if len(flags) == 1 else 'high'
     }
 
 
-@app.route('/api/model/info', methods=['GET'])
+@app.route('/api/v1/model/info', methods=['GET'])
 def model_info():
     """Get model information"""
     if model is None:
         return jsonify({'error': 'Model not loaded'}), 503
 
     return jsonify({
-        'model_type': type(model).__name__,
-        'features': list(model.feature_names_in_),
+        'model_type': 'Logistic Regression (Baseline)',
         'n_features': model.n_features_in_,
-        'last_updated': os.path.getmtime(os.getenv('MODEL_PATH', './models/hesitancy_model.pkl'))
+        'classes': [int(c) for c in model.classes_],
+        'last_updated': str(os.path.getmtime(os.getenv('MODEL_PATH', './models/hesitancy_model.pkl')))
     }), 200
 
 
-@app.route('/api/model/retrain', methods=['POST'])
-def retrain_model():
-    """Trigger model retraining (admin only)"""
-    try:
-        logger.info("Model retraining initiated")
-        # Call training script
-        os.system("python src/train_model.py")
-        return jsonify({'status': 'Retraining started'}), 202
-    except Exception as e:
-        logger.error(f"Retraining failed: {e}")
-        return jsonify({'error': str(e)}), 500
-
-
 if __name__ == '__main__':
-    port = int(os.getenv('PORT', 8000))
-    app.run(debug=os.getenv('NODE_ENV') == 'development', port=port, host='0.0.0.0')
+    port = int(os.getenv('PORT', 5000))
+    app.run(debug=os.getenv('FLASK_ENV') == 'development', port=port, host='0.0.0.0')
+

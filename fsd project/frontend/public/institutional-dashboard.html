@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Institutional Portal - Manage vaccine hesitancy assessments across your organization">
+    <title>Institutional Portal - VaccineAssess</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="institutional-portal.css">
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <svg class="logo-icon" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="24" cy="24" r="20" stroke="currentColor" stroke-width="2"/>
+                    <path d="M20 24l3 3 8-8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <h1>VaccineAssess</h1>
+            </div>
+            <div class="nav-right">
+                <span class="nav-org-label" id="org-name">My Organization</span>
+                <button class="btn btn-secondary btn-sm" onclick="logout()">Logout</button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="portal-wrapper">
+        <div class="portal-container">
+
+            <!-- Sidebar -->
+            <aside class="portal-sidebar">
+                <nav class="sidebar-nav">
+                    <button class="sidebar-item active" onclick="switchTab('dashboard')">
+                        <span class="icon">📊</span>
+                        <span>Dashboard</span>
+                    </button>
+                    <button class="sidebar-item" onclick="switchTab('assessments')">
+                        <span class="icon">📋</span>
+                        <span>Assessments</span>
+                    </button>
+                    <button class="sidebar-item" onclick="switchTab('groups')">
+                        <span class="icon">👥</span>
+                        <span>Groups</span>
+                    </button>
+                    <button class="sidebar-item" onclick="switchTab('reports')">
+                        <span class="icon">📈</span>
+                        <span>Reports</span>
+                    </button>
+                    <button class="sidebar-item" onclick="switchTab('settings')">
+                        <span class="icon">⚙️</span>
+                        <span>Settings</span>
+                    </button>
+                </nav>
+            </aside>
+
+            <!-- Main Content -->
+            <main class="portal-content">
+
+                <!-- Dashboard Tab -->
+                <section id="dashboard-tab" class="tab-content active">
+                    <div class="page-header">
+                        <div>
+                            <h1>Dashboard</h1>
+                            <p>Overview of your organization's vaccine hesitancy management</p>
+                        </div>
+                    </div>
+
+                    <!-- Key Metrics -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Total Assessments</h3>
+                                <span class="metric-icon">📊</span>
+                            </div>
+                            <div class="metric-value" id="total-assessments">0</div>
+                            <div class="metric-footer">+12% from last month</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Average Hesitancy</h3>
+                                <span class="metric-icon">📈</span>
+                            </div>
+                            <div class="metric-value" id="avg-hesitancy">--</div>
+                            <div class="metric-footer">Organization-wide average</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Active Groups</h3>
+                                <span class="metric-icon">👥</span>
+                            </div>
+                            <div class="metric-value" id="active-groups">0</div>
+                            <div class="metric-footer">Groups managing assessments</div>
+                        </div>
+
+                        <div class="metric-card">
+                            <div class="metric-header">
+                                <h3>Completion Rate</h3>
+                                <span class="metric-icon">✅</span>
+                            </div>
+                            <div class="metric-value" id="completion-rate">0%</div>
+                            <div class="metric-footer">Assessment completion ratio</div>
+                        </div>
+                    </div>
+
+                    <!-- Distribution Chart -->
+                    <div class="chart-section">
+                        <h2>Hesitancy Distribution</h2>
+                        <div class="chart-container">
+                            <div class="distribution-chart" id="distribution-chart">
+                                <div class="bar-item">
+                                    <div class="bar tier-confident" style="height: 35%"></div>
+                                    <span>Confident</span>
+                                    <small id="bar-confident">35%</small>
+                                </div>
+                                <div class="bar-item">
+                                    <div class="bar tier-mild" style="height: 28%"></div>
+                                    <span>Mildly</span>
+                                    <small id="bar-mild">28%</small>
+                                </div>
+                                <div class="bar-item">
+                                    <div class="bar tier-moderate" style="height: 22%"></div>
+                                    <span>Moderate</span>
+                                    <small id="bar-moderate">22%</small>
+                                </div>
+                                <div class="bar-item">
+                                    <div class="bar tier-strong" style="height: 15%"></div>
+                                    <span>Strong</span>
+                                    <small id="bar-strong">15%</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Assessments -->
+                    <div class="recent-section">
+                        <h2>Recent Assessments</h2>
+                        <div class="assessments-list" id="recent-assessments">
+                            <div class="empty-state">
+                                <p>No assessments yet. Start by creating a group!</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Assessments Tab -->
+                <section id="assessments-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h1>Assessments</h1>
+                            <p>View and manage all assessments from your organization</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="exportAssessments()">📥 Export Data</button>
+                    </div>
+
+                    <!-- Filters -->
+                    <div class="filter-bar">
+                        <input type="text" class="filter-input" placeholder="🔍 Search assessments..." id="search-assessments">
+                        <select class="filter-select" id="filter-tier" onchange="filterAssessments()">
+                            <option value="">All Tiers</option>
+                            <option value="confident">Confident</option>
+                            <option value="mild">Mildly Hesitant</option>
+                            <option value="moderate">Moderately Hesitant</option>
+                            <option value="strong">Strongly Hesitant</option>
+                        </select>
+                        <select class="filter-select" id="filter-group" onchange="filterAssessments()">
+                            <option value="">All Groups</option>
+                        </select>
+                    </div>
+
+                    <!-- Assessments Table -->
+                    <div class="table-container">
+                        <table class="assessments-table">
+                            <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Group</th>
+                                    <th>Score</th>
+                                    <th>Tier</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="assessments-tbody">
+                                <tr class="empty-row">
+                                    <td colspan="7" class="empty-state">No assessments found</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Groups Tab -->
+                <section id="groups-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h1>Groups</h1>
+                            <p>Manage assessment groups (departments, schools, etc.)</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openCreateGroupModal()">+ New Group</button>
+                    </div>
+
+                    <!-- Groups Grid -->
+                    <div class="groups-grid" id="groups-grid">
+                        <div class="empty-state" style="grid-column: 1/-1; text-align: center; padding: 60px 20px;">
+                            <p>No groups created yet.</p>
+                            <button class="btn btn-primary btn-lg" onclick="openCreateGroupModal()">Create First Group</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Reports Tab -->
+                <section id="reports-tab" class="tab-content">
+                    <div class="page-header">
+                        <div>
+                            <h1>Reports</h1>
+                            <p>Generate and view detailed reports</p>
+                        </div>
+                    </div>
+
+                    <div class="reports-container">
+                        <div class="report-card">
+                            <h3>📋 Summary Report</h3>
+                            <p>Overall organization statistics and trends</p>
+                            <button class="btn btn-secondary" onclick="generateReport('summary')">Generate</button>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>👥 Group Performance</h3>
+                            <p>Detailed breakdown by group with comparisons</p>
+                            <button class="btn btn-secondary" onclick="generateReport('group')">Generate</button>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>📈 Trend Analysis</h3>
+                            <p>Historical trends and pattern analysis</p>
+                            <button class="btn btn-secondary" onclick="generateReport('trends')">Generate</button>
+                        </div>
+
+                        <div class="report-card">
+                            <h3>🎯 Risk Assessment</h3>
+                            <p>Identify high-hesitancy populations for intervention</p>
+                            <button class="btn btn-secondary" onclick="generateReport('risk')">Generate</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Settings Tab -->
+                <section id="settings-tab" class="tab-content">
+                    <div class="page-header">
+                        <h1>Settings</h1>
+                    </div>
+
+                    <div class="settings-container">
+                        <div class="settings-section">
+                            <h3>Organization Information</h3>
+                            <div class="setting-item">
+                                <label>Organization Name</label>
+                                <input type="text" id="org-name-input" placeholder="Enter organization name">
+                            </div>
+                            <div class="setting-item">
+                                <label>Organization Type</label>
+                                <select id="org-type-input">
+                                    <option value="school">School/University</option>
+                                    <option value="hospital">Hospital/Healthcare</option>
+                                    <option value="corporate">Corporate</option>
+                                    <option value="government">Government</option>
+                                    <option value="ngo">NGO/Non-profit</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
+                            <div class="setting-item">
+                                <label>Contact Email</label>
+                                <input type="email" id="contact-email-input" placeholder="contact@organization.com">
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Notification Preferences</h3>
+                            <div class="setting-checkbox">
+                                <input type="checkbox" id="notify-new-assessments" checked>
+                                <label for="notify-new-assessments">Notify on new assessments</label>
+                            </div>
+                            <div class="setting-checkbox">
+                                <input type="checkbox" id="notify-weekly-summary" checked>
+                                <label for="notify-weekly-summary">Weekly summary report</label>
+                            </div>
+                            <div class="setting-checkbox">
+                                <input type="checkbox" id="notify-high-hesitancy">
+                                <label for="notify-high-hesitancy">Alert on high hesitancy scores</label>
+                            </div>
+                        </div>
+
+                        <div class="settings-section">
+                            <h3>Data Privacy</h3>
+                            <div class="privacy-info">
+                                <p>✅ All data is anonymized and DPDP compliant</p>
+                                <p>✅ No personally identifiable information is stored</p>
+                                <p>✅ Access is restricted to authorized users only</p>
+                            </div>
+                        </div>
+
+                        <button class="btn btn-primary btn-lg" onclick="saveSettings()">Save Settings</button>
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Create Group Modal -->
+    <div id="create-group-modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('create-group-modal')">&times;</button>
+            <h2>Create New Group</h2>
+            <div class="modal-form">
+                <div class="form-group">
+                    <label>Group Name</label>
+                    <input type="text" id="group-name-input" placeholder="e.g., Science Department">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="group-description-input" placeholder="Brief description of this group" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Group Size (estimated)</label>
+                    <input type="number" id="group-size-input" placeholder="Number of participants" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Manager Email</label>
+                    <input type="email" id="group-manager-input" placeholder="manager@organization.com">
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('create-group-modal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="createGroup()">Create Group</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="institutional-portal.js"></script>
+</body>
+</html>

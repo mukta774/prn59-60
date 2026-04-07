@@ -7,7 +7,7 @@ import pandas as pd
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, StandardScaler
-from sklearn.ensemble import GradientBoostingClassifier, RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 import shap
 import joblib
@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 
 class HesitancyModelTrainer:
-    """Train and export SHAP-interpretable model"""
+    """Train and export SHAP-interpretable Logistic Regression baseline model"""
 
     def __init__(self, data_path='../data/raw'):
         self.data_path = data_path
@@ -176,15 +176,14 @@ class HesitancyModelTrainer:
         self.feature_names = self.X_train.columns.tolist()
 
     def train_model(self):
-        """Train Gradient Boosting model"""
-        logger.info("Training Gradient Boosting Classifier...")
+        """Train Logistic Regression baseline model"""
+        logger.info("Training Logistic Regression Classifier...")
 
-        self.model = GradientBoostingClassifier(
-            n_estimators=100,
-            learning_rate=0.1,
-            max_depth=5,
+        self.model = LogisticRegression(
+            max_iter=1000,
             random_state=42,
-            verbose=1
+            solver='lbfgs',
+            class_weight='balanced'
         )
 
         self.model.fit(self.X_train_scaled, self.y_train)
@@ -215,9 +214,14 @@ class HesitancyModelTrainer:
         }
 
     def create_explainer(self):
-        """Create SHAP TreeExplainer"""
+        """Create SHAP LinearExplainer for Logistic Regression"""
         logger.info("Creating SHAP explainer...")
-        self.explainer = shap.TreeExplainer(self.model)
+        # For linear models like LogisticRegression, use LinearExplainer
+        self.explainer = shap.LinearExplainer(
+            self.model,
+            self.X_train_scaled,
+            feature_names=self.feature_names
+        )
 
     def save_model(self, model_dir='./models'):
         """Save model and explainer"""
