@@ -1,0 +1,15 @@
+{
+  "name": "vaccine-hesitancy-frontend",
+  "version": "1.0.0",
+  "description": "Vaccine Hesitancy Assessment System - Frontend",
+  "scripts": {
+    "start": "npx http-server public -p 3000 --cors",
+    "build": "echo 'No build needed - static HTML'"
+  },
+  "keywords": ["vaccine", "frontend", "static"],
+  "author": "Vaccine Hesitancy Team",
+  "license": "MIT",
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

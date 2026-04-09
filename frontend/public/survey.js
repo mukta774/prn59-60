@@ -396,40 +396,55 @@ async function submitSurvey(e) {
     submitBtn.innerHTML = '<span class="loading-spinner"></span> Processing...';
 
     try {
-        // Send to backend API
-        const response = await fetch('/api/v1/assessments/submit', {
+        // Send to backend API (use window.location.origin for dynamic URL)
+        const API_BASE = window.location.origin;
+        const response = await fetch(`${API_BASE}/api/survey/submit`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify(submissionData)
+            body: JSON.stringify({
+                responses: allResponses,
+                metadata: {
+                    timestamp: new Date().toISOString(),
+                    device: /Mobile|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+                    language: document.getElementById('language').value,
+                    session_id: generateSessionId(),
+                    total_time: (Date.now() - surveyStartTime) / 1000
+                }
+            })
         });
 
         if (response.ok) {
             const result = await response.json();
-            console.log('Assessment submitted:', result);
+            console.log('Survey submitted:', result);
 
-            // Save assessment ID for results page
-            localStorage.setItem('assessment_id', result.assessmentId);
+            // Save result ID for results page
+            localStorage.setItem('result_id', result.result_id);
             localStorage.removeItem('vaccine_survey_draft'); // Clear draft
 
             // Redirect to results page
             setTimeout(() => {
-                window.location.href = `results.html?id=${result.assessmentId}`;
+                window.location.href = `results.html?id=${result.result_id}`;
             }, 500);
         } else {
-            showErrorMessage('Failed to submit assessment. Please try again.');
+            const errorData = await response.json();
+            showErrorMessage(errorData.message || 'Failed to submit survey. Please try again.');
             submitBtn.disabled = false;
             submitBtn.textContent = originalText;
         }
     } catch (error) {
         console.error('Submission error:', error);
-        // Fallback: go to results anyway with local data
-        localStorage.setItem('assessment_data', JSON.stringify(submissionData));
-        setTimeout(() => {
-            window.location.href = 'results.html';
-        }, 1000);
+        showErrorMessage('Network error. Please check your connection and try again.');
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
     }
+}
+
+// Helper function to generate session ID
+function generateSessionId() {
+    return 'session_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
 }
 
 // ============================================================================

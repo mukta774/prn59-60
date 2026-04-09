@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel - Vaccine Hesitancy System</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .admin-container {
+            max-width: 1200px;
+            margin: 80px auto 40px;
+            padding: 20px;
+        }
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .stat-value {
+            font-size: 36px;
+            font-weight: bold;
+            color: #667eea;
+        }
+        .stat-label {
+            color: #666;
+            margin-top: 8px;
+        }
+        .queue-section {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        .queue-item {
+            border-bottom: 1px solid #e5e7eb;
+            padding: 20px 0;
+        }
+        .queue-item:last-child {
+            border-bottom: none;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .btn-approve {
+            background: #10b981;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-reject {
+            background: #ef4444;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .btn-revision {
+            background: #f59e0b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .login-prompt {
+            text-align: center;
+            padding: 60px 20px;
+        }
+        .login-form {
+            max-width: 400px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">
+                <h1>VaccineAssess Admin</h1>
+            </div>
+            <button id="logoutBtn" class="btn btn-secondary" style="display:none;">Logout</button>
+        </div>
+    </nav>
+
+    <div class="admin-container">
+        <!-- Login Section -->
+        <div id="loginSection">
+            <div class="login-prompt">
+                <h2>Admin Login</h2>
+                <div class="login-form">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="adminEmail" placeholder="admin@example.com">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="adminPassword" placeholder="Enter password">
+                    </div>
+                    <button class="btn btn-primary" onclick="login()">Login</button>
+                    <p id="loginError" style="color: red; margin-top: 10px;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Admin Dashboard -->
+        <div id="dashboardSection" style="display:none;">
+            <div class="admin-header">
+                <h1>Admin Dashboard</h1>
+                <p>Manage myths, institutions, and system overview</p>
+            </div>
+
+            <!-- Statistics -->
+            <div class="stats-grid" id="statsGrid">
+                <!-- Stats will be loaded here -->
+            </div>
+
+            <!-- Pending Myths Queue -->
+            <div class="queue-section">
+                <h2>Pending Myth Submissions</h2>
+                <div id="mythsQueue">
+                    <p>Loading...</p>
+                </div>
+            </div>
+
+            <!-- Pending Institutions Queue -->
+            <div class="queue-section">
+                <h2>Pending Institution Verifications</h2>
+                <div id="institutionsQueue">
+                    <p>Loading...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = window.location.origin + '/api';
+        let authToken = localStorage.getItem('admin_token');
+
+        // Check if already logged in
+        if (authToken) {
+            showDashboard();
+        }
+
+        async function login() {
+            const email = document.getElementById('adminEmail').value;
+            const password = document.getElementById('adminPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            try {
+                const response = await fetch(`${API_BASE}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (response.ok && data.user.role === 'admin') {
+                    authToken = data.token;
+                    localStorage.setItem('admin_token', authToken);
+                    showDashboard();
+                } else {
+                    errorEl.textContent = 'Invalid credentials or not an admin account';
+                }
+            } catch (error) {
+                errorEl.textContent = 'Login failed: ' + error.message;
+            }
+        }
+
+        function showDashboard() {
+            document.getElementById('loginSection').style.display = 'none';
+            document.getElementById('dashboardSection').style.display = 'block';
+            document.getElementById('logoutBtn').style.display = 'block';
+            loadStats();
+            loadMythsQueue();
+            loadInstitutionsQueue();
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/stats`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    const stats = data.stats;
+                    document.getElementById('statsGrid').innerHTML = `
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.users.total}</div>
+                            <div class="stat-label">Total Users</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.myths.pending}</div>
+                            <div class="stat-label">Pending Myths</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.myths.published}</div>
+                            <div class="stat-label">Published Myths</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-value">${stats.institutions.pending}</div>
+                            <div class="stat-label">Pending Institutions</div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Load stats error:', error);
+            }
+        }
+
+        async function loadMythsQueue() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/queue/myths`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    const queueEl = document.getElementById('mythsQueue');
+                    if (data.myths.length === 0) {
+                        queueEl.innerHTML = '<p>No pending myths</p>';
+                    } else {
+                        queueEl.innerHTML = data.myths.map(myth => `
+                            <div class="queue-item">
+                                <h3>${myth.concern}</h3>
+                                <p><strong>Response:</strong> ${myth.response.substring(0, 200)}...</p>
+                                <p><small>Submitted: ${new Date(myth.submitted_at).toLocaleDateString()}</small></p>
+                                <div class="action-buttons">
+                                    <button class="btn-approve" onclick="approveMyth('${myth.id}')">Approve</button>
+                                    <button class="btn-revision" onclick="requestRevision('${myth.id}')">Request Revision</button>
+                                    <button class="btn-reject" onclick="rejectMyth('${myth.id}')">Reject</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Load myths queue error:', error);
+            }
+        }
+
+        async function loadInstitutionsQueue() {
+            try {
+                const response = await fetch(`${API_BASE}/admin/queue/institutions`, {
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                const data = await response.json();
+
+                if (response.ok) {
+                    const queueEl = document.getElementById('institutionsQueue');
+                    if (data.institutions.length === 0) {
+                        queueEl.innerHTML = '<p>No pending institutions</p>';
+                    } else {
+                        queueEl.innerHTML = data.institutions.map(inst => `
+                            <div class="queue-item">
+                                <h3>${inst.name}</h3>
+                                <p><strong>Type:</strong> ${inst.type}</p>
+                                <p><strong>Contact:</strong> ${inst.contact_email}</p>
+                                <div class="action-buttons">
+                                    <button class="btn-approve" onclick="verifyInstitution('${inst.id}')">Verify</button>
+                                </div>
+                            </div>
+                        `).join('');
+                    }
+                }
+            } catch (error) {
+                console.error('Load institutions queue error:', error);
+            }
+        }
+
+        async function approveMyth(mythId) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/myth/${mythId}/approve`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (response.ok) {
+                    alert('Myth approved!');
+                    loadMythsQueue();
+                    loadStats();
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function rejectMyth(mythId) {
+            const reason = prompt('Reason for rejection:');
+            if (!reason) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/myth/${mythId}/reject`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ reason })
+                });
+                if (response.ok) {
+                    alert('Myth rejected!');
+                    loadMythsQueue();
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function requestRevision(mythId) {
+            const notes = prompt('Revision notes:');
+            if (!notes) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/admin/myth/${mythId}/request-revision`, {
+                    method: 'PUT',
+                    headers: { 
+                        'Authorization': `Bearer ${authToken}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ notes })
+                });
+                if (response.ok) {
+                    alert('Revision requested!');
+                    loadMythsQueue();
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        async function verifyInstitution(instId) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/institution/${instId}/verify`, {
+                    method: 'PUT',
+                    headers: { 'Authorization': `Bearer ${authToken}` }
+                });
+                if (response.ok) {
+                    alert('Institution verified!');
+                    loadInstitutionsQueue();
+                    loadStats();
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('admin_token');
+            location.reload();
+        });
+    </script>
+</body>
+</html>

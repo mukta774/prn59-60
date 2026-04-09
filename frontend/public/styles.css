@@ -4,16 +4,16 @@
 
 /* Root Variables */
 :root {
-    /* Colors */
-    --primary: #0066cc;
-    --primary-dark: #0052a3;
-    --primary-light: #e6f0ff;
-    --secondary: #00a86b;
+    /* Colors - Black & Blue Theme */
+    --primary: #1e40af;
+    --primary-dark: #1e3a8a;
+    --primary-light: #dbeafe;
+    --secondary: #3b82f6;
     --success: #10b981;
     --warning: #f59e0b;
     --danger: #ef4444;
-    --dark: #1a1a2e;
-    --dark-lighter: #2d2d44;
+    --dark: #000000;
+    --dark-lighter: #1a1a1a;
     --gray-100: #f9fafb;
     --gray-200: #f3f4f6;
     --gray-300: #e5e7eb;
@@ -199,9 +199,9 @@ a:hover {
     position: sticky;
     top: 0;
     z-index: 1000;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: #000000;
     backdrop-filter: blur(10px);
-    border-bottom: 1px solid var(--gray-200);
+    border-bottom: 1px solid #1e40af;
     box-shadow: var(--shadow-sm);
     transition: all var(--transition-base);
 }
@@ -225,13 +225,13 @@ a:hover {
     gap: var(--spacing-sm);
     font-size: var(--font-size-2xl);
     font-weight: 700;
-    color: var(--primary);
+    color: #3b82f6;
 }
 
 .logo-icon {
     width: 32px;
     height: 32px;
-    color: var(--primary);
+    color: #3b82f6;
 }
 
 .nav-links {
@@ -242,13 +242,13 @@ a:hover {
 }
 
 .nav-links a {
-    color: var(--text-primary);
+    color: #ffffff;
     font-weight: 500;
     transition: color var(--transition-fast);
 }
 
 .nav-links a:hover {
-    color: var(--primary);
+    color: #3b82f6;
 }
 
 .nav-cta {
@@ -276,7 +276,7 @@ a:hover {
 .nav-toggle span {
     width: 24px;
     height: 3px;
-    background-color: var(--text-primary);
+    background-color: #ffffff;
     border-radius: var(--radius-full);
     transition: all var(--transition-base);
 }
@@ -303,7 +303,7 @@ a:hover {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    background: linear-gradient(135deg, #000000 0%, #1e40af 100%);
     color: white;
     overflow: hidden;
     padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-2xl);
@@ -354,12 +354,12 @@ a:hover {
 
 .hero-ctas .btn-secondary {
     background-color: white;
-    color: var(--primary);
+    color: #1e40af;
     border: 2px solid white;
 }
 
 .hero-ctas .btn-secondary:hover {
-    background-color: var(--primary-light);
+    background-color: #dbeafe;
 }
 
 .hero-tag {
@@ -430,16 +430,19 @@ a:hover {
 .section-header {
     text-align: center;
     margin-bottom: var(--spacing-4xl);
+    padding-top: var(--spacing-2xl);
 }
 
 .section-header h2 {
     color: var(--text-primary);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
+    line-height: 1.3;
 }
 
 .section-header p {
     font-size: var(--font-size-lg);
     color: var(--text-secondary);
+    margin-bottom: var(--spacing-xl);
 }
 
 /* ============================================================================
@@ -447,8 +450,9 @@ a:hover {
    ============================================================================ */
 
 .how-it-works {
-    padding: var(--spacing-4xl) var(--spacing-lg);
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-4xl);
     background-color: var(--bg-secondary);
+    margin-top: var(--spacing-3xl);
 }
 
 .steps-grid {
@@ -461,11 +465,12 @@ a:hover {
 
 .step-card {
     background: var(--bg-primary);
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-3xl) var(--spacing-2xl);
     border-radius: var(--radius-xl);
     border: 2px solid var(--gray-200);
     transition: all var(--transition-base);
     text-align: center;
+    min-height: 300px;
 }
 
 .step-card:hover {
@@ -482,12 +487,13 @@ a:hover {
 
 .step-card h3 {
     color: var(--text-primary);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    margin-top: var(--spacing-lg);
 }
 
 .step-card p {
-    margin-bottom: var(--spacing-md);
-    line-height: 1.6;
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.8;
 }
 
 .step-card small {
@@ -515,8 +521,9 @@ a:hover {
    ============================================================================ */
 
 .trust-section {
-    padding: var(--spacing-4xl) var(--spacing-lg);
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-4xl);
     background: white;
+    margin-top: var(--spacing-3xl);
 }
 
 .trust-grid {
@@ -562,25 +569,27 @@ a:hover {
    ============================================================================ */
 
 .myths-preview {
-    padding: var(--spacing-4xl) var(--spacing-lg);
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-4xl);
     background-color: var(--bg-secondary);
+    margin-top: var(--spacing-3xl);
 }
 
 .myths-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-3xl);
     margin-bottom: var(--spacing-4xl);
 }
 
 .myth-card {
     background: var(--bg-primary);
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-3xl) var(--spacing-2xl);
     border-radius: var(--radius-xl);
     border: 2px solid var(--gray-200);
     transition: all var(--transition-base);
     display: flex;
     flex-direction: column;
+    min-height: 350px;
 }
 
 .myth-card:hover {
@@ -591,17 +600,19 @@ a:hover {
 
 .myth-emoji {
     font-size: 2.5rem;
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
 }
 
 .myth-card h3 {
     color: var(--text-primary);
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
+    line-height: 1.4;
 }
 
 .myth-card p {
-    margin-bottom: var(--spacing-md);
+    margin-bottom: var(--spacing-lg);
     flex: 1;
+    line-height: 1.8;
 }
 
 .myth-fact {
@@ -640,20 +651,21 @@ a:hover {
    ============================================================================ */
 
 .stats-section {
-    padding: var(--spacing-4xl) var(--spacing-lg);
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-4xl);
     background: linear-gradient(135deg, var(--primary), var(--primary-dark));
     color: white;
+    margin-top: var(--spacing-3xl);
 }
 
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: var(--spacing-2xl);
+    gap: var(--spacing-3xl);
 }
 
 .stat-item {
     text-align: center;
-    padding: var(--spacing-2xl);
+    padding: var(--spacing-3xl) var(--spacing-2xl);
     border-right: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -690,8 +702,9 @@ a:hover {
    ============================================================================ */
 
 .faq-section {
-    padding: var(--spacing-4xl) var(--spacing-lg);
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-4xl);
     background-color: var(--bg-primary);
+    margin-top: var(--spacing-3xl);
 }
 
 .faq-container {
@@ -700,7 +713,7 @@ a:hover {
 }
 
 .faq-item {
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
     border-radius: var(--radius-lg);
     border: 1px solid var(--gray-200);
     overflow: hidden;
@@ -713,17 +726,18 @@ a:hover {
 
 .faq-question {
     width: 100%;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
     background-color: var(--bg-secondary);
     border: none;
     cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: var(--font-size-base);
+    font-size: var(--font-size-lg);
     font-weight: 600;
     color: var(--text-primary);
     transition: all var(--transition-fast);
+    line-height: 1.5;
 }
 
 .faq-question:hover {
@@ -754,12 +768,13 @@ a:hover {
 
 .faq-item.active .faq-answer {
     max-height: 500px;
-    padding: var(--spacing-lg);
+    padding: var(--spacing-xl) var(--spacing-lg);
 }
 
 .faq-answer p {
     color: var(--text-secondary);
     line-height: 1.8;
+    margin-bottom: var(--spacing-md);
 }
 
 /* ============================================================================
@@ -767,16 +782,18 @@ a:hover {
    ============================================================================ */
 
 .cta-final {
-    padding: var(--spacing-4xl) var(--spacing-lg);
+    padding: var(--spacing-4xl) var(--spacing-lg) var(--spacing-4xl);
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     text-align: center;
+    margin-top: var(--spacing-3xl);
 }
 
 .cta-content h2 {
     font-size: var(--font-size-4xl);
-    margin-bottom: var(--spacing-lg);
+    margin-bottom: var(--spacing-2xl);
     color: white;
+    line-height: 1.3;
 }
 
 .cta-content p {
@@ -786,6 +803,7 @@ a:hover {
     max-width: 600px;
     margin-left: auto;
     margin-right: auto;
+    line-height: 1.7;
 }
 
 .cta-buttons {

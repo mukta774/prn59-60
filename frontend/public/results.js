@@ -121,10 +121,15 @@ const tierDefinitions = {
 // Initialization
 // ============================================================================
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     console.log('Results Page Loaded');
-    loadAssessmentData();
-    calculateHesitancyScore();
+    await loadAssessmentData();
+    
+    // Only calculate score if we don't have it from API
+    if (!hesitancyScore || hesitancyScore === 0) {
+        calculateHesitancyScore();
+    }
+    
     displayResults();
 });
 
@@ -132,32 +137,48 @@ document.addEventListener('DOMContentLoaded', () => {
 // Load Assessment Data
 // ============================================================================
 
-function loadAssessmentData() {
-    // Try to load from localStorage first
-    let data = localStorage.getItem('assessment_data');
+async function loadAssessmentData() {
+    // Try to get result ID from URL parameter
+    const params = new URLSearchParams(window.location.search);
+    const resultId = params.get('id') || localStorage.getItem('result_id');
 
-    if (data) {
+    if (resultId) {
+        console.log('Fetching result from API:', resultId);
         try {
-            assessmentData = JSON.parse(data);
-            console.log('Loaded assessment data from localStorage');
-        } catch (e) {
-            console.error('Error parsing assessment data:', e);
-            showError('Could not load assessment data');
+            const API_BASE = window.location.origin;
+            const response = await fetch(`${API_BASE}/api/results/${resultId}`);
+            if (response.ok) {
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                // Store the result data
+                assessmentData = {
+                    score: data.result.hesitancy_score,
+                    tier: data.result.tier,
+                    factors: data.result.shap_factors,
+                    myths: data.result.recommended_myths,
+                    timestamp: data.result.result_timestamp
+                };
+                
+                // Update global variables
+                hesitancyScore = assessmentData.score;
+                hesitancyTier = assessmentData.tier;
+                
+                console.log('Loaded result from API');
+                return;
+            } else {
+                console.error('Failed to fetch result from API');
+            }
+        } catch (error) {
+            console.error('Error fetching result:', error);
         }
-    } else {
-        // Try to get from URL parameter (for API response)
-        const params = new URLSearchParams(window.location.search);
-        const assessmentId = params.get('id');
-
-        if (assessmentId) {
-            // In production, would fetch from API
-            console.log('Assessment ID:', assessmentId);
-        }
-
-        // Use demo data if nothing found
-        console.log('Using demo assessment data');
-        assessmentData = generateDemoData();
     }
+
+    // Fallback to demo data if API fails
+    console.log('Using demo assessment data');
+    assessmentData = generateDemoData();
+    hesitancyScore = 42;
+    hesitancyTier = 'Mildly Hesitant';
 }
 
 function generateDemoData() {
