@@ -114,12 +114,17 @@ function previousQuestion() {
 
 function showHideQuestions() {
     const questionElements = document.querySelectorAll('.survey-question');
+    console.log('showHideQuestions called - currentQuestion:', currentQuestion, 'found elements:', questionElements.length);
+    
     questionElements.forEach((el) => {
         const questionNum = parseInt(el.getAttribute('data-question'));
+        console.log(`Question ${questionNum}:`, questionNum === currentQuestion ? 'SHOWING' : 'HIDING');
+        
         if (questionNum === currentQuestion) {
             // Show current question
             el.classList.add('active-question');
             el.classList.remove('hidden-question');
+            el.style.display = 'block'; // Force display
             // Scroll to it
             setTimeout(() => {
                 el.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -128,6 +133,7 @@ function showHideQuestions() {
             // Hide other questions
             el.classList.remove('active-question');
             el.classList.add('hidden-question');
+            el.style.display = 'none'; // Force hide
         }
     });
 }
