@@ -111,8 +111,13 @@ function focusCurrentQuestion() {
     questionElements.forEach((el, index) => {
         const questionNum = parseInt(el.getAttribute('data-question'));
         if (questionNum === currentQuestion) {
+            // Show current question
+            el.style.display = 'block';
             el.scrollIntoView({ behavior: 'smooth', block: 'center' });
             el.focus();
+        } else {
+            // Hide other questions
+            el.style.display = 'none';
         }
     });
 }
