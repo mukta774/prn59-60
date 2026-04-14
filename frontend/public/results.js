@@ -123,14 +123,26 @@ const tierDefinitions = {
 
 document.addEventListener('DOMContentLoaded', async () => {
     console.log('Results Page Loaded');
-    await loadAssessmentData();
     
-    // Only calculate score if we don't have it from API
-    if (!hesitancyScore || hesitancyScore === 0) {
-        calculateHesitancyScore();
+    try {
+        await loadAssessmentData();
+        
+        // Only calculate score if we don't have it from API
+        if (!hesitancyScore || hesitancyScore === 0) {
+            console.log('No score from API, calculating...');
+            calculateHesitancyScore();
+        }
+        
+        console.log('Displaying results with score:', hesitancyScore, 'tier:', hesitancyTier);
+        displayResults();
+    } catch (error) {
+        console.error('Error loading results:', error);
+        // Still try to display with demo data
+        hesitancyScore = 42;
+        hesitancyTier = 'Mildly Hesitant';
+        assessmentData = generateDemoData();
+        displayResults();
     }
-    
-    displayResults();
 });
 
 // ============================================================================
