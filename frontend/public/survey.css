@@ -146,11 +146,11 @@
 }
 
 .survey-question.hidden-question {
-    display: none;
+    display: none !important;
 }
 
 .survey-question.active-question {
-    display: block;
+    display: block !important;
 }
 
 .survey-question:hover {

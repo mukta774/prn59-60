@@ -203,10 +203,15 @@ function getSectionName(questionNum) {
 
 function validateQuestion(questionNum) {
     const questionElement = document.querySelector(`[data-question="${questionNum}"]`);
-    if (!questionElement) return false;
+    if (!questionElement) {
+        console.log(`Question ${questionNum} element not found`);
+        return false;
+    }
 
     const radioButtons = questionElement.querySelectorAll('input[type="radio"]');
     const isAnswered = Array.from(radioButtons).some(rb => rb.checked);
+    
+    console.log(`Validating Q${questionNum}:`, isAnswered, 'radio buttons:', radioButtons.length);
 
     if (!isAnswered) {
         questionElement.classList.add('has-error');
