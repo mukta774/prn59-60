@@ -172,7 +172,7 @@
     width: 32px;
     height: 32px;
     background-color: var(--primary);
-    color: white;
+    color: #000000;
     border-radius: var(--radius-full);
     font-weight: 700;
     font-size: var(--font-size-base);
