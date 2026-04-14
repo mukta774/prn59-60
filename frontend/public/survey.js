@@ -89,12 +89,18 @@ function nextQuestion() {
         }
 
         currentQuestion++;
+        console.log('Moving to question:', currentQuestion); // Debug
         updateProgress();
         showHideQuestions();
         saveResponsesToStorage();
     } else if (currentQuestion === totalQuestions) {
-        // Show submit section
-        showSubmitSection();
+        // Already on last question - validate and show submit
+        if (!validateQuestion(currentQuestion)) {
+            showErrorMessage(`Please answer question ${currentQuestion}`);
+            return;
+        }
+        console.log('On last question, showing submit section'); // Debug
+        updateProgress(); // This should show the submit section
     }
 }
 
@@ -160,16 +166,28 @@ function updateProgress() {
 
     // Enable/disable buttons
     document.getElementById('prev-btn').disabled = currentQuestion === 1;
-    document.getElementById('next-btn').disabled = currentQuestion === totalQuestions;
-
-    // Show/hide submit section
+    
+    // Show/hide submit section and next button based on current question
     const submitSection = document.getElementById('submit-section');
+    const nextBtn = document.getElementById('next-btn');
+    
     if (currentQuestion === totalQuestions) {
-        submitSection.style.display = 'block';
-        document.getElementById('next-btn').style.display = 'none';
+        // On last question - show submit, hide next
+        if (submitSection) {
+            submitSection.style.display = 'block';
+            submitSection.style.visibility = 'visible';
+        }
+        if (nextBtn) {
+            nextBtn.style.display = 'none';
+        }
     } else {
-        submitSection.style.display = 'none';
-        document.getElementById('next-btn').style.display = 'block';
+        // Not on last question - hide submit, show next
+        if (submitSection) {
+            submitSection.style.display = 'none';
+        }
+        if (nextBtn) {
+            nextBtn.style.display = 'inline-block';
+        }
     }
 }
 
