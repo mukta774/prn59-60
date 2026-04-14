@@ -46,7 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function initializeSurvey() {
     updateProgress();
-    focusCurrentQuestion();
+    showHideQuestions(); // Show only first question on load
 }
 
 // ============================================================================
@@ -90,7 +90,7 @@ function nextQuestion() {
 
         currentQuestion++;
         updateProgress();
-        focusCurrentQuestion();
+        showHideQuestions();
         saveResponsesToStorage();
     } else if (currentQuestion === totalQuestions) {
         // Show submit section
@@ -102,24 +102,32 @@ function previousQuestion() {
     if (currentQuestion > 1) {
         currentQuestion--;
         updateProgress();
-        focusCurrentQuestion();
+        showHideQuestions();
     }
 }
 
-function focusCurrentQuestion() {
+function showHideQuestions() {
     const questionElements = document.querySelectorAll('.survey-question');
-    questionElements.forEach((el, index) => {
+    questionElements.forEach((el) => {
         const questionNum = parseInt(el.getAttribute('data-question'));
         if (questionNum === currentQuestion) {
             // Show current question
-            el.style.display = 'block';
-            el.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            el.focus();
+            el.classList.add('active-question');
+            el.classList.remove('hidden-question');
+            // Scroll to it
+            setTimeout(() => {
+                el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 100);
         } else {
             // Hide other questions
-            el.style.display = 'none';
+            el.classList.remove('active-question');
+            el.classList.add('hidden-question');
         }
     });
+}
+
+function focusCurrentQuestion() {
+    showHideQuestions();
 }
 
 function handleKeyboardNavigation(e) {

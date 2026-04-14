@@ -145,6 +145,14 @@
     transition: all var(--transition-base);
 }
 
+.survey-question.hidden-question {
+    display: none;
+}
+
+.survey-question.active-question {
+    display: block;
+}
+
 .survey-question:hover {
     box-shadow: var(--shadow-md);
     transform: translateX(4px);
