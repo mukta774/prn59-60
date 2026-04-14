@@ -17,6 +17,9 @@ dotenv.config();
 // Initialize Express app
 const app = express();
 
+// Trust proxy (required for Render, Heroku, and other cloud platforms)
+app.set('trust proxy', 1);
+
 // Logger configuration
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
